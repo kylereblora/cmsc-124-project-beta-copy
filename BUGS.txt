@@ -1,0 +1,16 @@
+
+	*============================================================================================*
+	| DATE     | STATUS     | DESCRIPTION                                                        |
+	|============================================================================================|
+	| 11/27/17 | INCOMPLETE | I HAS A var                                                        |
+	|          |            | I HAS A var                                                        |
+	|          |            | redeclaration of variables; check if var is defined                |
+	| 11/27/17 | INCOMPLETE | I HAS A var ITZ 2 (3 || ITZ || etc)                                |
+	|          |            | no statements allowed after declaration                            |
+	| 11/28/17 |  COMPLETE  | var ITZ 3                                                          |
+	|          |            | ITZ used as a assignment operator                                  |
+	| 12/01/17 | INCOMPLETE | "3" AN "4" -> read as yarn literal                                 |
+	|          |            | parsing problem                                                    |
+	| 12/01/17 | INCOMPLETE | SUM 3 AN "string literal"                                          |
+	|          |            | operation of invalid values                                        |
+	==============================================================================================
