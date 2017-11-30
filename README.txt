@@ -1,7 +1,7 @@
 /*****************************************************************************************
 *                                                                                        *
 *  Project in Computer Science 124 (Design and Implementation of Programming Languages)  *
-*  Second Semester School Year 2016-2017                                                 *
+*  First Semester School Year 2017-2018                                                  *
 *                                                                                        *
 *  LOLCODE Interpreter                                                                   *
 *  Project Version - Beta Version                                                        *
