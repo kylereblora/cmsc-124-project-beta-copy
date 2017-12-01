@@ -13,4 +13,6 @@
 	|          |            | parsing problem                                                    |
 	| 12/01/17 | INCOMPLETE | SUM 3 AN "string literal"                                          |
 	|          |            | operation of invalid values                                        |
+	| 12/01/17 | INCOMPLETE | var R var                                                          |
+	|          |            | assignment to itself                                               |
 	==============================================================================================
