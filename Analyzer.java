@@ -376,7 +376,7 @@ public class Analyzer {
 				break;
 			case "Variable Identifier":
 				tempY = this.checkStorage(variableY);
-				else if (this.storage.get(this.checkStorage(variableY)).getLexType().equals("Numbr Literal")) y = Integer.parseInt(this.storage.get(this.checkStorage(variableY)).getRegex());
+				if (this.storage.get(this.checkStorage(variableY)).getLexType().equals("Numbr Literal")) y = Integer.parseInt(this.storage.get(this.checkStorage(variableY)).getRegex());
 				else if (this.storage.get(this.checkStorage(variableY)).getLexType().equals("Numbar Literal")) y = Float.valueOf(this.storage.get(this.checkStorage(variableY)).getRegex().trim()).floatValue();
 				else if (this.storage.get(this.checkStorage(variableY)).getLexType().equals("Yarn Literal")) {
 					tempY = this.parser.parse(this.storage.get(this.checkStorage(variableY)).getRegex());
@@ -567,6 +567,7 @@ public class Analyzer {
 			this.terminal.error(8602,2);
 			return null;
 		} concatenated = this.storage.get(it).getRegex();
+		concatenated = this.parser.removeQuotes(concatenated);
 
 		// Condition 2: No values after SMOOSH keyword
 		if(this.lexlist.size() == index+1) {
@@ -593,7 +594,7 @@ public class Analyzer {
 			} tailString = this.storage.get(it).getRegex();
 
 			this.lexlist.remove(index+1);
-			concatenated += tailString;
+			concatenated += this.parser.removeQuotes(tailString);
 		}
 
 		this.storage.put(it, new Lexeme(concatenated, "Yarn Literal"));

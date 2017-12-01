@@ -172,7 +172,7 @@ public class Parser {
 		// Literals
 		this.addRegex("-?[0-9]+\\.[0-9]+", "Numbar Literal"); 
 		this.addRegex("-?[0-9]+", "Numbr Literal");
-		this.addRegex("\".+\"", "Yarn Literal");
+		this.addRegex("\"[^\"]+\"", "Yarn Literal");
 		this.addRegex("(WIN|FAIL)", "Troof Literal");
 		this.addRegex("(TROOF|NUMBR|NUMBAR|YARN|NOOB)", "Type Literal");
 
