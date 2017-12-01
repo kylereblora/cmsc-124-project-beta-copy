@@ -56,6 +56,8 @@
 	| 8106 | SYNX | missing statement after R operator                                         |
 	| 8107 | SYNX | missing AN statement in binary operator                                    |
 	| 8108 | SYNX | missing arguments; arithmetic operation                                    |
+	| 8109 | SYNX | missing arguments; gimmeh operation                                        |
+	| 8110 | SYNX | missing arguments; ooolean operation                                       |
 	|------------------------------------------------------------------------------------------|
 	| 8201 | SYNX | invalid use of variable declaration; variable has been initialized already |
 	| 8202 | SYNX | invalid use of variable declaration; ITZ statement not found               |
@@ -67,6 +69,8 @@
 	| 8600 | SYNX | invalid start of SMOOSH function                                           |
 	| 8601 | SYNX | expected values after SMOOSH                                               |
 	| 8602 | SYNX | invalid value for SMOOSH                                                   |
+	|------------------------------------------------------------------------------------------|
+	| 8700 | SYNX | boolean operation; invalid arguments                                       |
 	============================================================================================
 	| 6000 | SMNC |                                                                            |
 	*==========================================================================================*

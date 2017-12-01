@@ -28,7 +28,7 @@ public class Analyzer {
 	private Parser parser;
 	private Terminal terminal;
 	private Boolean isComplete;
-	private final static int current = 0;
+	private static int current = 0;
 
 	/**************************
 	*  Analyzer Constructors  *
@@ -86,6 +86,7 @@ public class Analyzer {
 			case "Output Keyword": return visible(lexeme);
 			case "Concatenation": return smoosh(lexeme);
 			case "Input Keyword": return gimmeh(lexeme);
+			case "Boolean Operator": return booleanOperator(lexeme);
 			default: return null;
 		}
 	}
@@ -221,15 +222,26 @@ public class Analyzer {
 
 		// Search: Lexeme in Table
 		Lexeme temporaryVariable = checkStorage(lexeme);
-
+		//this.lastLexeme = temporaryVariable;
 		// Condition 1: Variable Not In The Storage
 		if(temporaryVariable==null) {
 
 			// Condition 1.1: Variable will be used for declaration
-			if (this.lastLexeme.getLexType().equals("Variable Declaration")) {
+			if (this.lastLexeme == null) {
+				System.out.println("VISIBLE went here");
+				this.terminal.error(8104,2);
+				return null;
+
+			} else if (this.lastLexeme.getLexType().equals("Variable Declaration")) {
 				this.storage.put(this.it,lexeme);
 				return lexeme;
-			} else {
+			} else if (this.lastLexeme.getLexType().equals("Output Keyword")) {
+				current++;
+				this.terminal.error(8104,2);
+				current = 0;
+				return null;
+			}else {
+				System.out.println("VISIBLE went here XXXXX");
 				this.terminal.error(8104,2);
 				return null;
 			}
@@ -473,14 +485,29 @@ public class Analyzer {
 		return lexeme;
 	}
 
-	private Lexeme gimmeh(Lexeme lexeme) {	
+	private Lexeme gimmeh(Lexeme lexeme) {
+
+
 		this.lexlist.remove(current);
+		if(this.lexlist.size() == 0) {
+			this.terminal.error(8109, 2);
+			return null;
+		}
+		
 		Lexeme variable = this.checkStorage(this.lexlist.get(current));
-		JFrame popUp = new JFrame();
-		String input = JOptionPane.showInputDialog(popUp,"KYAH PENGENG INPUT... KYAH. TEH. (o3o)", null);
-		this.storage.put(this.it, new Lexeme(input, "Yarn Literal"));
-		this.storage.put(variable, this.storage.get(this.it));
-		return lexeme;
+
+		if (variable != null) {
+			JFrame popUp = new JFrame();
+			String input = JOptionPane.showInputDialog(popUp,"KYAH PENGENG INPUT... KYAH. TEH. (o3o)", null);
+			this.storage.put(this.it, new Lexeme(input, "Yarn Literal"));
+			this.storage.put(variable, this.storage.get(this.it));
+			return lexeme;
+		}
+
+		this.terminal.error(8104,2);
+		return null;
+
+		
 	}
 
 	private Lexeme visible(Lexeme lexeme) {
@@ -491,7 +518,7 @@ public class Analyzer {
 			return null;
 
 		} else {
-
+			this.lastLexeme = lexeme;
 		// Condition 2: No Statements Found After Visible
 			if (this.lexlist.size() == 1) {
 				this.terminal.error(8301, 2);
@@ -571,5 +598,138 @@ public class Analyzer {
 
 		this.storage.put(it, new Lexeme(concatenated, "Yarn Literal"));
 		return new Lexeme(concatenated, "Yarn Literal");
+	}
+
+
+	private Lexeme booleanOperator(Lexeme lexeme) {
+
+		Object x=null,y=null;
+
+		Lexeme operation = lexeme; int index = this.lexlist.indexOf(lexeme);
+
+		// Condition 1: No Statements found after operator
+		if (this.lexlist.size() == index+1) {
+			this.terminal.error(8110,2);
+			return null;
+		}
+
+		// Condition 2: Argument X is invalid
+		Lexeme variableX = determineType(this.lexlist.get(index+1));
+		Lexeme tempX = null;
+		if (variableX == null) {
+			this.terminal.error(8108,2);
+			return null;
+		} 
+
+		// Condition 3: Argument X is valid
+
+		switch(variableX.getLexType()) {
+			case "Troof Literal" : 
+				if (variableX.getRegex().equals("WIN")) { x = true; }
+				else if (variableX.getRegex().equals("FAIL")) { x = false; }
+				break;
+
+			case "Variable Identifier" : 
+				tempX = this.checkStorage(variableX);
+				if (this.storage.get(tempX).getLexType().equals("Troof Literal")){
+					if (this.storage.get(tempX).getRegex().equals("WIN")) { x = true; }
+					else if (this.storage.get(tempX).getRegex().equals("FAIL")) { x = false; }
+					break;
+				} else {
+					this.terminal.error(8700, 2);
+					return null;
+				}
+				
+			default: break;
+		}
+
+		// Condition 4: Uses AN operator
+		this.lexlist.remove(index+1);
+		if(!this.lexlist.get(index+1).getLexType().equals("Operation Keyword")) {
+			this.terminal.error(8107,2);
+			return null;
+		} this.lexlist.remove(index+1);
+
+		// Condition 5: No statements found after AN Operator
+		if (this.lexlist.size() == index+1) {
+			this.terminal.error(8108,2);
+			return null;
+		}
+
+		// Condition 6: Argument Y is invalid
+		Lexeme variableY = determineType(this.lexlist.get(index+1));
+		Lexeme tempY = null;
+		if (variableY == null) {
+			this.terminal.error(8108,2);
+			return null;
+		} 
+
+		// Condition 7: Argument Y is valid
+
+		switch(variableY.getLexType()) {
+			case "Troof Literal" : 
+				if (variableY.getRegex().equals("WIN")) { y = true; }
+				else if (variableY.getRegex().equals("FAIL")) { y = false; }
+				break;
+
+			case "Variable Identifier" : 
+				tempY = this.checkStorage(variableY);
+				if (this.storage.get(tempY).getLexType().equals("Troof Literal")){
+					if (this.storage.get(tempY).getRegex().equals("WIN")) { y = true; }
+					else if (this.storage.get(tempY).getRegex().equals("FAIL")) { y = false; }
+					break;
+				} else {
+					this.terminal.error(8700, 2);
+					return null;
+				}
+				
+			default: break;
+		}
+
+		// Condition 8: Both X and Y are valid
+		Lexeme result = new Lexeme(null,"NOOB Literal");
+
+		// Condition 8.1: Both are TROOFs
+		if (x instanceof Boolean && y instanceof Boolean) {
+			switch (operation.getRegex()) {
+				case "BOTH OF": result = boolOperator(x,y,1); break;
+				case "EITHER OF": result = boolOperator(x,y,2); break;
+				case "WON OF": result = boolOperator(x,y,3); break;
+				// case "NOT": result = boolOperator(x,y,4); break;
+				default: break;
+			}
+		}
+
+		this.lexlist.remove(index+1);
+		System.out.println("result: "+ result.getRegex());
+		this.storage.put(this.it,result);
+		return result; 
+	}
+
+	private Lexeme boolOperator(Object x, Object y, int code) {
+		Boolean a = (Boolean) x; Boolean b = (Boolean) y; boolean answer = true;
+
+		System.out.println(a);
+		System.out.println(b);
+
+
+		switch (code) {
+			case 1: answer = a && b; break;
+			case 2: answer = a || b; break;
+			case 3: 
+				if (a == b) { // xor
+					answer = false;
+				} else { answer = true; }
+
+				break;
+			// case 4: answer = a/b; break;
+			default: break;
+		}
+
+		String result = "";
+		if(answer == true) result = "WIN";
+		else result = "FAIL";
+
+		return new Lexeme(result,"Troof Literal");
 	}
 }

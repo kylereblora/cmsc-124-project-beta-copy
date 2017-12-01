@@ -96,6 +96,8 @@ public class Terminal extends JPanel {
 				case 106: errorDescription = "invalid use of assignment operator  :: no value found after operator \n"; break;
 				case 107: errorDescription = "invalid binary operation :: missing AN statement \n"; break;
 				case 108: errorDescription = "invalid binary operation :: missing operator \n"; break;
+				case 109: errorDescription = "invalid input operation :: expected operand after GIMMEH\n"; break;
+				case 110: errorDescription = "invalid boolean operation :: missing operand\n"; break;
 				case 200: errorDescription = "invalid use of variable declaration :: invalid value after variable assignment \n"; break;
 				case 202: errorDescription = "invalid use of variable declaration :: found statement not ITZ\n"; break;
 				case 300: errorDescription = "invalid use of output keyword :: statements found before 'VISIBLE' keyword\n"; break;
@@ -104,6 +106,7 @@ public class Terminal extends JPanel {
 				case 600: errorDescription = "invalid use of SMOOSH function :: invalid start\n"; break;
 				case 601: errorDescription = "invalid use of SMOOSH function :: expected values after\n"; break;
 				case 602: errorDescription = "invalid use of SMOOSH function :: invalid arguments\n"; break;
+				case 700: errorDescription = "invalid use of boolean operation :: invalid arguments\n"; break;
 				default: break;
 			}
 
