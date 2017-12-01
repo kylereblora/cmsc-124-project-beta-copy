@@ -202,8 +202,6 @@ public class Parser {
 		this.addRegex("ANY\\sOF", "Boolean Operator");
 		this.addRegex("ALL\\sOF", "Boolean Operator");
 		this.addRegex("WON\\sOF", "Boolean Operator");
-		this.addRegex("EITHER\\sOF", "Boolean Operator");
-		this.addRegex("NOT", "Boolean Operator");
 		this.addRegex("MKAY", "Boolean Operator");
 
 		// Comparison-Boolean Operators

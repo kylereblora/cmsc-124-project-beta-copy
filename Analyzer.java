@@ -376,7 +376,7 @@ public class Analyzer {
 				break;
 			case "Variable Identifier":
 				tempY = this.checkStorage(variableY);
-				if (this.storage.get(this.checkStorage(variableY)).getLexType().equals("Numbr Literal")) y = Integer.parseInt(this.storage.get(this.checkStorage(variableY)).getRegex());
+				else if (this.storage.get(this.checkStorage(variableY)).getLexType().equals("Numbr Literal")) y = Integer.parseInt(this.storage.get(this.checkStorage(variableY)).getRegex());
 				else if (this.storage.get(this.checkStorage(variableY)).getLexType().equals("Numbar Literal")) y = Float.valueOf(this.storage.get(this.checkStorage(variableY)).getRegex().trim()).floatValue();
 				else if (this.storage.get(this.checkStorage(variableY)).getLexType().equals("Yarn Literal")) {
 					tempY = this.parser.parse(this.storage.get(this.checkStorage(variableY)).getRegex());
@@ -385,7 +385,7 @@ public class Analyzer {
 					else {this.terminal.error(8500,2); return null; }
 				}
 				break;
-			default: return null;
+			default: this.terminal.error(8203,2); return null;
 		} this.lexlist.remove(index+1);
 
 		// Condition 8: Both X and Y are valid

@@ -100,6 +100,7 @@ public class Terminal extends JPanel {
 				case 110: errorDescription = "invalid boolean operation :: missing operand\n"; break;
 				case 200: errorDescription = "invalid use of variable declaration :: invalid value after variable assignment \n"; break;
 				case 202: errorDescription = "invalid use of variable declaration :: found statement not ITZ\n"; break;
+				case 203: errorDescription = "invalid use of variable declaration :: invalid argument\n"; break;
 				case 300: errorDescription = "invalid use of output keyword :: statements found before 'VISIBLE' keyword\n"; break;
 				case 301: errorDescription = "invalid use of output keyword :: no statements found after 'VISIBLE' keyword\n"; break;
 				case 500: errorDescription = "arithmetic operation :: invalid arguments\n"; break;

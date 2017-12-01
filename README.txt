@@ -61,6 +61,7 @@
 	|------------------------------------------------------------------------------------------|
 	| 8201 | SYNX | invalid use of variable declaration; variable has been initialized already |
 	| 8202 | SYNX | invalid use of variable declaration; ITZ statement not found               |
+	| 8203 | SYNX | invalid use of variable declaration; invalid argument                      |
 	|------------------------------------------------------------------------------------------|
 	| 8300 | SYNX | invalid use of output keyword; statements found before VISIBLE             |
 	|------------------------------------------------------------------------------------------|
