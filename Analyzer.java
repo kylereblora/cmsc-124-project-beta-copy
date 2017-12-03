@@ -66,7 +66,7 @@ public class Analyzer {
 				this.isComplete = true;
 				return false;
 			}
-
+			this.lastLexeme = this.lexlist.get(current);
 			this.lexlist.remove(current);
 		} 
 
@@ -129,6 +129,7 @@ public class Analyzer {
 	public ArrayList<Lexeme> getLexemes() {return this.lexlist;}
 	public Lexeme getIt() {return this.it;}
 	public int getCurrent(){ return this.current;}
+	public boolean getCommentFlag() {return this.commentFlag;}
 	public boolean getStatus() {
 		if (this.isComplete == null) return true;
 		return this.isComplete;
@@ -150,7 +151,8 @@ public class Analyzer {
 *******************************************************************************************************************/
 
 	private Lexeme comment(Lexeme lexeme) {
-
+		
+		this.commentFlag = true;
 		this.table.getModel().addRow(new Object[]{this.lexlist.get(current).getRegex(),this.lexlist.get(current).getLexType()});
 		System.out.println("Processing comment lexeme...");
 		int index = this.lexlist.indexOf(lexeme);
@@ -158,6 +160,7 @@ public class Analyzer {
 			this.lexlist.remove(index+1);
 		}
 
+		this.commentFlag = false;
 		return lexeme;
 	}
 
@@ -222,6 +225,8 @@ public class Analyzer {
 	}
 
 	private Lexeme variableDeclaration(Lexeme lexeme) {
+
+		this.lastLexeme = lexeme;
 
 		int index = this.lexlist.indexOf(lexeme);
 		this.keys = this.storage.keySet();
@@ -288,6 +293,11 @@ public class Analyzer {
 				return lexeme;
 
 			// Condition 1.2: Variable uninitialized
+			} else if (this.lastLexeme.getLexType().equals("Output Keyword")) {
+				current++;
+				this.terminal.error(8104,2);
+				current = 0;
+				return null;
 			} else {
 				this.terminal.error(8104,2);
 				return null;
@@ -295,8 +305,8 @@ public class Analyzer {
 
 		// Condition 2: Variable is in Storage
 		} else {
-			if (this.lexlist.size() == index+1) this.storage.put(this.it, temporaryVariable);
-			else this.storage.put(this.it, this.storage.get(temporaryVariable));
+			if (this.lexlist.size() == index+1) {this.storage.put(this.it, temporaryVariable);}
+			else {this.storage.put(this.it, this.storage.get(temporaryVariable));}
 			return lexeme;
 		}
 	}
@@ -839,6 +849,7 @@ public class Analyzer {
 
 		} else {
 
+			this.lastLexeme = lexeme;
 		// Condition 2: No Statements Found After Visible
 			if (this.lexlist.size() == index) {
 				this.terminal.print("\n");
@@ -846,7 +857,6 @@ public class Analyzer {
 			}
 
 		// Condition 3: Valid Statements Found
-			this.lexlist.remove(current);
 			String message = "";
 			while (this.lexlist.size() > index+1) {
 				
@@ -876,6 +886,7 @@ public class Analyzer {
 			
 			} message+= "\n";
 
+			System.out.println("message: ======================"+message);
 			this.storage.put(this.it, new Lexeme(message, "Yarn Literal"));
 			this.terminal.print(message);
 				
@@ -944,6 +955,33 @@ public class Analyzer {
 		this.table.getModel().addRow(new Object[]{this.lexlist.get(index).getRegex(),this.lexlist.get(index).getLexType()});
 
 		this.storage.put(this.it, lexeme);
+		return lexeme;
+	}
+
+	private Lexeme controlFlowIfThen(Lexeme lexeme) {
+
+		this.table.getModel().addRow(new Object[]{this.lexlist.get(current).getRegex(),this.lexlist.get(current).getLexType()});
+		switch (lexeme.getRegex()) {
+			case "O RLY?":
+				this.expression = this.storage.get(this.it);
+				this.condition = false;
+				if (expression.getRegex().equals("WIN")) condition = true;
+				else condition = false;
+				flowFlag = true;
+				break;
+			case "YA RLY":
+				if (condition==true) subFlowFlag = true;
+				break;
+			case "NO WAI":
+				if (condition==false) subFlowFlag = true;
+				else subFlowFlag = false;
+				break;
+			case "OIC":
+				flowFlag = false;
+				break;
+			default: break;
+		}
+
 		return lexeme;
 	}
 

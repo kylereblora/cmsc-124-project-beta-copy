@@ -73,9 +73,10 @@ public class Parser {
 			    	tempLex = new Lexeme(this.temp, tokens.get(i).getType());
 
 			    	// --- lexical error: invalid statement
-			    	if (tempLex.getLexType().equals("Invalid Statement")) {
+			    	if (tempLex.getLexType().equals("Invalid Statement") && this.myTerminal.getExecuteButton().getAnalyzer().getCommentFlag() == false) {
+			    		
 			    		this.myTerminal.error(3000,2);
-			    		return true;
+			    		return false;
 			    	}
 					
 					// --- valid lexeme

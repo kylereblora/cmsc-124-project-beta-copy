@@ -93,7 +93,7 @@ public class Terminal extends JPanel {
 				case 101: errorDescription = "expected HAI statement :: missing code delimiter\n"; break;
 				case 102: errorDescription = "invalid use of variable declaration :: missing variable identifier\n"; break;
 				case 103: errorDescription = "invalid use of variable declaration :: expected value after variable declaration ITZ\n"; break;
-				case 104: errorDescription = "variable "+ this.executeButton.getAnalyzer().getLexemes().get(this.executeButton.getAnalyzer().getCurrent()+1).getRegex() +" is not defined\n"; break;
+				case 104: errorDescription = "variable "+ this.executeButton.getAnalyzer().getLexemes().get(this.executeButton.getAnalyzer().getCurrent()).getRegex() +" is not defined\n"; break;
 				case 105: errorDescription = "invalid use of assignment operator :: no variable found before operator\n"; break;
 				case 106: errorDescription = "invalid use of assignment operator  :: no value found after operator \n"; break;
 				case 107: errorDescription = "invalid binary operation :: missing AN statement \n"; break;
@@ -149,6 +149,7 @@ public class Terminal extends JPanel {
 	public ExecuteButton getButton() {return this.executeButton;}
 	public Editor getEditor() {return this.editor;}
 	public Interpreter getInterpreter() {return this.interpreter;}
+	public ExecuteButton getExecuteButton() {return this.executeButton;}
 	public static int getPanelWidth(){return Terminal.MAXIMUM_PANEL_WIDTH;}
 	public static int getPanelHeight(){return Terminal.MAXIMUM_PANEL_HEIGHT;}
 
