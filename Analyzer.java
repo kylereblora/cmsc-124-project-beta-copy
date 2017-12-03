@@ -890,9 +890,11 @@ public class Analyzer {
 			this.storage.put(this.it, new Lexeme(message, "Yarn Literal"));
 			this.terminal.print(message);
 		 	
-			if (this.lexlist.get(index+1).getLexType().equals("Comments")){
-			 	this.lexlist.remove(index+1);
-			 }
+			if (this.lexlist.size() == index){
+				if (this.lexlist.get(index+1).getLexType().equals("Comments")){
+				 	this.lexlist.remove(index+1);
+				}
+			}	
 
 		}
 
