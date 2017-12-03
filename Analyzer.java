@@ -66,7 +66,6 @@ public class Analyzer {
 				this.isComplete = true;
 				return false;
 			}
-
 			this.lastLexeme = this.lexlist.get(current);
 			this.lexlist.remove(current);
 		} 
@@ -83,12 +82,12 @@ public class Analyzer {
 			return lexeme;
 
 		// Condition 2: Lexemes are not inside the program
-		} else if (!lexeme.getLexType().equals("Code Delimiter") && !lexeme.getLexType().equals("Comments") && !lexeme.getLexType().equals("Multi-line Comment") && this.isComplete==null) {
+		} else if (!lexeme.getLexType().equals("Code Delimiter") && !lexeme.getLexType().equals("Comments") &&!lexeme.getLexType().equals("Multi-line Comment") && this.isComplete==null) {
 			this.terminal.error(8003, 2);
 			return null;
 
 		// Condition 3: Lexemes are not to be executed
-		} else if (this.flowFlag && !this.subFlowFlag && (!lexeme.getLexType().equals("IF-THEN Statement") && !lexeme.getLexType().equals("SWITCH-CASE Statement"))) {
+		} else if (this.flowFlag && !this.subFlowFlag && !lexeme.getLexType().equals("IF-THEN Statement")) {
 			return lexeme;
 		}
 
@@ -113,7 +112,6 @@ public class Analyzer {
 			case "Concatenation": return smoosh(lexeme);
 			case "Input Keyword": return gimmeh(lexeme);
 			case "IF-THEN Statement": return controlFlowIfThen(lexeme);
-			case "SWITCH-CASE Statement": return controlFlowSwitch(lexeme);
 			default: return null;
 		}
 	}
@@ -170,23 +168,22 @@ public class Analyzer {
 
 	private Lexeme multiLineComment(Lexeme lexeme) {
 
+		// Lexeme to Table
+
 		// Condition 1: The program will skip comments.
 		 if (this.commentFlag == false) {
 			if (lexeme.getRegex().equals("TLDR")) {
 				this.terminal.error(8007,1);
 				return null;
 			} else if (lexeme.getRegex().equals("OBTW")) {
-				this.table.getModel().addRow(new Object[]{this.lexlist.get(current).getRegex(),this.lexlist.get(current).getLexType()});
 				this.commentFlag = true;
 			}
 
-		// Condition 2: The program will finish commenting.
+		// Condition 3: The program will finish commenting.
 		} else if (this.commentFlag == true) {
-			if (lexeme.getRegex().equals("TLDR")) {
-				this.table.getModel().addRow(new Object[]{this.lexlist.get(current).getRegex(),this.lexlist.get(current).getLexType()});
-				this.commentFlag = false;
-			}
+			if (lexeme.getRegex().equals("TLDR")) this.commentFlag = false;
 		}
+		this.table.getModel().addRow(new Object[]{this.lexlist.get(current).getRegex(),this.lexlist.get(current).getLexType()});
 		return lexeme;
 	}
 
@@ -320,7 +317,7 @@ public class Analyzer {
 		int index = this.lexlist.indexOf(lexeme);
 
 		// Condition 1: No Preceding Statements Found
-		if (!this.lastLexeme.getLexType().equals("Variable Identifier") && !this.lastLexeme.getLexType().equals("Global Variable")) {
+		if (!this.lastLexeme.getLexType().equals("Variable Identifier")) {
 			this.terminal.error(8105,2);
 			return null;
 
@@ -377,7 +374,7 @@ public class Analyzer {
 				tempX = this.parser.parse(variableX.getRegex());
 				if (tempX.getLexType().equals("Numbr Literal")) x = Integer.parseInt(tempX.getRegex());
 				else if (tempX.getLexType().equals("Numbar Literal")) x = Float.valueOf(tempX.getRegex().trim()).floatValue();
-				else {this.terminal.error(6100,2); return null; }
+				else {this.terminal.error(6000,2); return null; }
 				break;
 			case "Variable Identifier":
 				tempX = this.checkStorage(variableX);
@@ -387,7 +384,7 @@ public class Analyzer {
 					tempX = this.parser.parse(this.storage.get(tempX).getRegex());
 					if (tempX.getLexType().equals("Numbr Literal")) x = Integer.parseInt(tempX.getRegex());
 					else if (tempX.getLexType().equals("Numbar Literal")) x = Float.valueOf(tempX.getRegex().trim()).floatValue();
-					else {this.terminal.error(6100,2); return null; }
+					else {this.terminal.error(6000,2); return null; }
 				}
 				break;
 			default: return null;
@@ -420,7 +417,7 @@ public class Analyzer {
 				tempY = this.parser.parse(variableY.getRegex());
 				if (tempY.getLexType().equals("Numbr Literal")) y = Integer.parseInt(tempY.getRegex());
 				else if (tempY.getLexType().equals("Numbar Literal")) y = Float.valueOf(tempY.getRegex().trim()).floatValue();
-				else {this.terminal.error(6100,2); return null;}
+				else {this.terminal.error(6000,2); return null;}
 				break;
 			case "Variable Identifier":
 				tempY = this.checkStorage(variableY);
@@ -430,7 +427,7 @@ public class Analyzer {
 					tempY = this.parser.parse(this.storage.get(tempY).getRegex());
 					if (tempY.getLexType().equals("Numbr Literal")) y = Integer.parseInt(tempY.getRegex());
 					else if (tempY.getLexType().equals("Numbar Literal")) y = Float.valueOf(tempY.getRegex().trim()).floatValue();
-					else {this.terminal.error(6100,2); return null; }
+					else {this.terminal.error(6000,2); return null; }
 				}
 				break;
 			default: this.terminal.error(8203,2); return null;
@@ -638,7 +635,7 @@ public class Analyzer {
 				tempX = this.parser.parse(variableX.getRegex());
 				if (tempX.getLexType().equals("Numbr Literal")) x = Integer.parseInt(tempX.getRegex());
 				else if (tempX.getLexType().equals("Numbar Literal")) x = Float.valueOf(tempX.getRegex().trim()).floatValue();
-				else {this.terminal.error(6100,2); return null; }
+				else {this.terminal.error(6000,2); return null; }
 				break;
 			case "Variable Identifier":
 				tempX = this.checkStorage(variableX);
@@ -648,7 +645,7 @@ public class Analyzer {
 					tempX = this.parser.parse(variableX.getRegex());
 					if (tempX.getLexType().equals("Numbr Literal")) x = Integer.parseInt(tempX.getRegex());
 					else if (tempX.getLexType().equals("Numbar Literal")) x = Float.valueOf(tempX.getRegex().trim()).floatValue();
-					else {this.terminal.error(6100,2); return null; }
+					else {this.terminal.error(6000,2); return null; }
 					break;
 				}
 				break;
@@ -682,7 +679,7 @@ public class Analyzer {
 				tempY = this.parser.parse(variableY.getRegex());
 				if (tempY.getLexType().equals("Numbr Literal")) y = Integer.parseInt(tempY.getRegex());
 				else if (tempY.getLexType().equals("Numbar Literal")) y = Float.valueOf(tempY.getRegex().trim()).floatValue();
-				else {this.terminal.error(6100,2); return null;}
+				else {this.terminal.error(6000,2); return null;}
 				break;
 			case "Variable Identifier":
 				tempY = this.checkStorage(variableY);
@@ -692,7 +689,7 @@ public class Analyzer {
 					tempY = this.parser.parse(variableY.getRegex());
 					if (tempY.getLexType().equals("Numbr Literal")) y = Integer.parseInt(tempY.getRegex());
 					else if (tempY.getLexType().equals("Numbar Literal")) y = Float.valueOf(tempY.getRegex().trim()).floatValue();
-					else {this.terminal.error(6100,2); return null;}
+					else {this.terminal.error(6000,2); return null;}
 					break;
 				}
 				break;
@@ -799,7 +796,7 @@ public class Analyzer {
 				else answer = false;
 				break;
 			default: break;
-		}
+		} System.out.println(answer);
 
 		if(answer == true) result = "WIN";
 		else result = "FAIL";
@@ -846,27 +843,24 @@ public class Analyzer {
 		this.table.getModel().addRow(new Object[]{this.lexlist.get(index).getRegex(),this.lexlist.get(index).getLexType()});
 
 		// Condition 1: Preceding Statements Before Visible
-		System.out.println("Checking statements before ( VISIBLE ) keyword...");
 		if (this.lexlist.get(current) != lexeme) {
 			this.terminal.error(8300, 2);
 			return null;
 
 		} else {
 
-		System.out.println("No statements found before ( VISIBLE )");
-		System.out.println("Checking statements after ( VISIBLE ) keyword...");
-		// Condition 2: No Statements Found After Visible
 			this.lastLexeme = lexeme;
-			if (this.lexlist.size() == current+1) {
+		// Condition 2: No Statements Found After Visible
+			if (this.lexlist.size() == index) {
 				this.terminal.print("\n");
 				return lexeme;
 			}
 
 		// Condition 3: Valid Statements Found
-			String message = ""; Lexeme temporaryLexeme = null;
-			while (this.lexlist.size() > current+1) {
+			String message = "";
+			while (this.lexlist.size() > index+1) {
 				
-				temporaryLexeme = determineType(this.lexlist.get(current+1));
+				Lexeme temporaryLexeme = determineType(this.lexlist.get(index+1));
 
 				// Condition 3.1: The statement to be printed is invalid
 				if (temporaryLexeme==null) return null;
@@ -880,8 +874,12 @@ public class Analyzer {
 				} else if (temporaryLexeme.getLexType().equals("Variable Identifier") || temporaryLexeme.getLexType().equals("Global Variable")) {
 					message += this.storage.get(this.checkStorage(temporaryLexeme)).getRegex() + " ";
 
-				// Condition 3.4: The next statement is a comment
+				// Condition 3.4: The statements were not met
+				} else if (temporaryLexeme.getLexType().equals("Comments")) {
+					break;
+
 				} else return null;
+
 
 		 		this.lexlist.remove(index+1);
 			
@@ -890,7 +888,7 @@ public class Analyzer {
 			this.storage.put(this.it, new Lexeme(message, "Yarn Literal"));
 			this.terminal.print(message);
 		 	
-			if (this.lexlist.size() == index){
+			if(this.lexlist.size() == index){
 				if (this.lexlist.get(index+1).getLexType().equals("Comments")){
 				 	this.lexlist.remove(index+1);
 				}
@@ -910,7 +908,7 @@ public class Analyzer {
 		// Condition 1: Invalid X Argument
 		Lexeme variableX = determineType(this.lexlist.get(index+1));
 		if (variableX==null) {
-			this.terminal.error(8612,2);
+			this.terminal.error(8602,2);
 			return null;
 		} concatenated = this.storage.get(it).getRegex();
 		concatenated = this.parser.removeQuotes(concatenated);
@@ -936,7 +934,7 @@ public class Analyzer {
 			this.lexlist.remove(index+1);
 			Lexeme variableY = determineType(this.lexlist.get(index+1));
 			if (variableY == null) {
-				this.terminal.error(8612,2);
+				this.terminal.error(8602,2);
 				return null;
 			} tailString = this.storage.get(it).getRegex();
 
@@ -950,13 +948,12 @@ public class Analyzer {
 	}
 
 	private Lexeme globalVariable (Lexeme lexeme) {
-		this.lastLexeme = lexeme;
 		if (this.lexlist.get(current).getLexType().equals("Variable Declaration")) {
 			this.terminal.error(8006,1);
 			return null;
 		} else if (this.lexlist.get(current).getLexType().equals("Output Keyword")) {
 			return this.storage.get(this.checkStorage(lexeme));
-		} return this.storage.get(checkStorage(it));
+		} return lexeme;
 	}
 
 	private Lexeme literal(Lexeme lexeme) {
@@ -995,37 +992,8 @@ public class Analyzer {
 		return lexeme;
 	}
 
-	private Lexeme controlFlowSwitch(Lexeme lexeme) {
-
-		System.out.println(lexeme.getRegex());
-
-		this.table.getModel().addRow(new Object[]{this.lexlist.get(current).getRegex(),this.lexlist.get(current).getLexType()});
-		switch (lexeme.getRegex()) {
-			case "WTF?":
-				this.expression = this.storage.get(this.it);
-				System.out.println(this.expression.getRegex());
-				flowFlag = true;
-				break;
-			case "OMG":
-				System.out.println(this.lexlist.get(this.lexlist.indexOf(lexeme)+1).getRegex());
-				if (this.expression.getRegex().equals(this.lexlist.get(this.lexlist.indexOf(lexeme)+1).getRegex())) {
-					this.lexlist.remove(current+1);
-					subFlowFlag = true;
-				}
-				break;
-			case "OMGWTF":
-				subFlowFlag = true;
-				break;
-			case "GTFO":
-				subFlowFlag = false;
-				flowFlag = false;
-				break;
-			default: break;
-		} return lexeme;
-	}
-
 	private Lexeme invalidStatement(Lexeme lexeme) {
-		if (this.terminal.getExecuteButton().getAnalyzer().getCommentFlag() == false) {
+		if (this.terminal.getExecuteButton().getAnalyzer().getCommentFlag() == false) {			    		
 			this.terminal.error(3000,2);
 			return null;
 		}
