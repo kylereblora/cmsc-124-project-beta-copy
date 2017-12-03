@@ -1,0 +1,11 @@
+
+******************************************************
+|	CMSC 124 LOLTERPRETER PROJECT 1ST SEM AY 17-18   |
+|	                                                 |
+|	Group Name: Ping Pong Pang                       |
+|	Contributors: 									 |
+|		Quinn Baticos                                |
+|		Kyle Reblora			         	 	 	 |
+|		Nicolo Unson                                 |
+|                                     				 |
+******************************************************

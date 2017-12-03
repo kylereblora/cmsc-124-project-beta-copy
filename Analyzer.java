@@ -149,7 +149,7 @@ public class Analyzer {
 /*******************************************************************************************************************
 	>> FUNCTIONS NEEDED FOR ANALYSIS
 *******************************************************************************************************************/
-
+	
 	private Lexeme comment(Lexeme lexeme) {
 		
 		this.commentFlag = true;
@@ -157,7 +157,11 @@ public class Analyzer {
 		this.table.getModel().addRow(new Object[]{this.lexlist.get(current).getRegex(),this.lexlist.get(current).getLexType()});
 		System.out.println("Processing comment lexeme...");
 		int index = this.lexlist.indexOf(lexeme);
+
+		System.out.println("======= INDEX ====: "+index + "\n"+"===========size?===="+this.lexlist.size());
+
 		while (this.lexlist.size() > index+1) {
+			System.out.println("Processing comment lexeme... !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
 			this.lexlist.remove(index+1);
 		}
 
@@ -168,7 +172,6 @@ public class Analyzer {
 	private Lexeme multiLineComment(Lexeme lexeme) {
 
 		// Lexeme to Table
-		this.table.getModel().addRow(new Object[]{this.lexlist.get(current).getRegex(),this.lexlist.get(current).getLexType()});
 
 		// Condition 1: The program will skip comments.
 		 if (this.commentFlag == false) {
@@ -183,7 +186,7 @@ public class Analyzer {
 		} else if (this.commentFlag == true) {
 			if (lexeme.getRegex().equals("TLDR")) this.commentFlag = false;
 		}
-
+		this.table.getModel().addRow(new Object[]{this.lexlist.get(current).getRegex(),this.lexlist.get(current).getLexType()});
 		return lexeme;
 	}
 
@@ -986,30 +989,12 @@ public class Analyzer {
 		return lexeme;
 	}
 
-	private Lexeme controlFlowIfThen(Lexeme lexeme) {
-
-		this.table.getModel().addRow(new Object[]{this.lexlist.get(current).getRegex(),this.lexlist.get(current).getLexType()});
-		switch (lexeme.getRegex()) {
-			case "O RLY?":
-				this.expression = this.storage.get(this.it);
-				this.condition = false;
-				if (expression.getRegex().equals("WIN")) condition = true;
-				else condition = false;
-				flowFlag = true;
-				break;
-			case "YA RLY":
-				if (condition==true) subFlowFlag = true;
-				break;
-			case "NO WAI":
-				if (condition==false) subFlowFlag = true;
-				else subFlowFlag = false;
-				break;
-			case "OIC":
-				flowFlag = false;
-				break;
-			default: break;
+	private Lexeme invalidStatement(Lexeme lexeme) {
+		if (this.terminal.getExecuteButton().getAnalyzer().getCommentFlag() == false) {
+			    		
+			this.terminal.error(3000,2);
+			return null;
 		}
-
 		return lexeme;
 	}
 
