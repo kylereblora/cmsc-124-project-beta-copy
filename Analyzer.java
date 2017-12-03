@@ -137,7 +137,8 @@ public class Analyzer {
 *******************************************************************************************************************/
 
 	private Lexeme comment(Lexeme lexeme) {
-
+		
+		this.commentFlag = true;
 		this.table.getModel().addRow(new Object[]{this.lexlist.get(current).getRegex(),this.lexlist.get(current).getLexType()});
 		System.out.println("Processing comment lexeme...");
 		int index = this.lexlist.indexOf(lexeme);
@@ -145,6 +146,7 @@ public class Analyzer {
 			this.lexlist.remove(index+1);
 		}
 
+		this.commentFlag = false;
 		return lexeme;
 	}
 
