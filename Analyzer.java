@@ -288,7 +288,8 @@ public class Analyzer {
 
 		int index = this.lexlist.indexOf(lexeme);
 	
-		// Condition 1: No Preceding Statements Found
+		// Condition 1: No Preceding Statements Found]
+		System.out.println("index: "+index+ "     current: "+ current);
 		if (this.lexlist.get(current) == lexeme) {
 			this.terminal.error(8105,2);
 			return null;
