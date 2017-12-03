@@ -82,12 +82,12 @@ public class Analyzer {
 			return lexeme;
 
 		// Condition 2: Lexemes are not inside the program
-		} else if (!lexeme.getLexType().equals("Code Delimiter") && !lexeme.getLexType().equals("Comments") &&!lexeme.getLexType().equals("Multi-line Comment") && this.isComplete==null) {
+		} else if (!lexeme.getLexType().equals("Code Delimiter") && !lexeme.getLexType().equals("Comments") && !lexeme.getLexType().equals("Multi-line Comment") && this.isComplete==null) {
 			this.terminal.error(8003, 2);
 			return null;
 
 		// Condition 3: Lexemes are not to be executed
-		} else if (this.flowFlag && !this.subFlowFlag && !lexeme.getLexType().equals("IF-THEN Statement")) {
+		} else if (this.flowFlag && !this.subFlowFlag && (!lexeme.getLexType().equals("IF-THEN Statement") && !lexeme.getLexType().equals("SWITCH-CASE Statement"))) {
 			return lexeme;
 		}
 
@@ -112,6 +112,7 @@ public class Analyzer {
 			case "Concatenation": return smoosh(lexeme);
 			case "Input Keyword": return gimmeh(lexeme);
 			case "IF-THEN Statement": return controlFlowIfThen(lexeme);
+			case "SWITCH-CASE Statement": return controlFlowSwitch(lexeme);
 			default: return null;
 		}
 	}
@@ -886,7 +887,6 @@ public class Analyzer {
 			
 			} message+= "\n";
 
-			System.out.println("message: ======================"+message);
 			this.storage.put(this.it, new Lexeme(message, "Yarn Literal"));
 			this.terminal.print(message);
 				
@@ -985,25 +985,26 @@ public class Analyzer {
 		return lexeme;
 	}
 
-	private Lexeme controlFlowIfThen(Lexeme lexeme) {
+	private Lexeme controlFlowSwitch(Lexeme lexeme) {
 
 		this.table.getModel().addRow(new Object[]{this.lexlist.get(current).getRegex(),this.lexlist.get(current).getLexType()});
 		switch (lexeme.getRegex()) {
-			case "O RLY?":
+			case "WTF?":
 				this.expression = this.storage.get(this.it);
-				this.condition = false;
-				if (expression.getRegex().equals("WIN")) condition = true;
-				else condition = false;
 				flowFlag = true;
 				break;
-			case "YA RLY":
-				if (condition==true) subFlowFlag = true;
+			case "OMG":
+				System.out.println("Switch casing " + this.expression.getRegex());
+				if (this.expression.getRegex().equals(this.lexlist.get(this.lexlist.indexOf(lexeme)+1).getRegex())) {
+					this.lexlist.remove(current+1);
+					subFlowFlag = true;
+				}
 				break;
-			case "NO WAI":
-				if (condition==false) subFlowFlag = true;
-				else subFlowFlag = false;
+			case "OMGWTF":
+				subFlowFlag = true;
 				break;
-			case "OIC":
+			case "GTFO":
+				subFlowFlag = false;
 				flowFlag = false;
 				break;
 			default: break;
