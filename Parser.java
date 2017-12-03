@@ -72,9 +72,6 @@ public class Parser {
 			    	s = this.matcher.replaceFirst("").trim();
 			    	tempLex = new Lexeme(this.temp, tokens.get(i).getType());
 
-			    	// --- lexical error: invalid statement
-					
-					// --- valid lexeme
 					this.lexemes.add(tempLex);
 					break;
 				}

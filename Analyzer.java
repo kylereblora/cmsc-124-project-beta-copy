@@ -155,10 +155,10 @@ public class Analyzer {
 	private Lexeme comment(Lexeme lexeme) {
 		
 		this.commentFlag = true;
-		
-		this.table.getModel().addRow(new Object[]{this.lexlist.get(current).getRegex(),this.lexlist.get(current).getLexType()});
-		System.out.println("Processing comment lexeme...");
 		int index = this.lexlist.indexOf(lexeme);
+		
+		this.table.getModel().addRow(new Object[]{this.lexlist.get(index).getRegex(),this.lexlist.get(index).getLexType()});
+		System.out.println("\nProcessing comment lexeme...\n");
 
 		while (this.lexlist.size() > index+1) {
 			this.lexlist.remove(index+1);
@@ -842,8 +842,8 @@ public class Analyzer {
 	}
 
 	private Lexeme visible(Lexeme lexeme) {
-
-		this.table.getModel().addRow(new Object[]{this.lexlist.get(current).getRegex(),this.lexlist.get(current).getLexType()});
+		int index = this.lexlist.indexOf(lexeme);
+		this.table.getModel().addRow(new Object[]{this.lexlist.get(index).getRegex(),this.lexlist.get(index).getLexType()});
 
 		// Condition 1: Preceding Statements Before Visible
 		System.out.println("Checking statements before ( VISIBLE ) keyword...");
@@ -869,9 +869,7 @@ public class Analyzer {
 				temporaryLexeme = determineType(this.lexlist.get(current+1));
 
 				// Condition 3.1: The statement to be printed is invalid
-				if (temporaryLexeme==null) {
-					return null;
-				}
+				if (temporaryLexeme==null) return null;
 
 				// Condition 3.2: The statement to be printed is a literal
 				else if (temporaryLexeme.getLexType().equals("Numbr Literal") || temporaryLexeme.getLexType().equals("Numbar Literal") || temporaryLexeme.getLexType().equals("Yarn Literal") || temporaryLexeme.getLexType().equals("Troof Literal")){
@@ -885,14 +883,20 @@ public class Analyzer {
 				// Condition 3.4: The next statement is a comment
 				} else return null;
 
-		 		this.lexlist.remove(current+1);
+		 		this.lexlist.remove(index+1);
 			
 			} message+= "\n";
 
 			this.storage.put(this.it, new Lexeme(message, "Yarn Literal"));
 			this.terminal.print(message);
-				
-		} return lexeme;
+		 	
+			if (this.lexlist.get(index+1).getLexType().equals("Comments")){
+			 	this.lexlist.remove(index+1);
+			 }
+
+		}
+
+		return lexeme;
 	}
 
 	private Lexeme smoosh(Lexeme lexeme) {
