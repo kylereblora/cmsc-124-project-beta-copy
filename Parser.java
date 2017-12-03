@@ -53,20 +53,6 @@ public class Parser {
 		tokens.add(new Token(Pattern.compile("^(" + regex + ")"), tokentype));
 	}
 
-	public void cleanLexList(){
-		/*--------------------------------------------------------
-			Method Description: removes all multi-/comments 
-		--------------------------------------------------------*/
-		ArrayList<Lexeme> temp =  new ArrayList<Lexeme>();
-		for (Lexeme i: this.lexemes) {
-			if (!(i.getLexType().equals("Comments")||i.getLexType().equals("Multi-line Comment"))) {
-				temp.add(i);
-			}
-		}
-
-		this.lexemes = temp;
-	}
-
 	public boolean createLexemes(String str) {
 		/*-------------------------------------------------------------------------------------------------
 			Method Description: This method matches the read lines to the tokens and creates the lexemes.
@@ -75,8 +61,8 @@ public class Parser {
 		Boolean flag = false;
 		String filename = this.myTerminal.getEditor().getFileName();														
 
+		System.out.println("Parsing statements...");
 		while(!s.equals("")){
-
 			for(int i = 0; i < tokens.size(); i++){
 				this.matcher = tokens.get(i).getRegex().matcher(s);
 				if(this.matcher.find()){
@@ -86,40 +72,16 @@ public class Parser {
 			    	s = this.matcher.replaceFirst("").trim();
 			    	tempLex = new Lexeme(this.temp, tokens.get(i).getType());
 
-			    	// --- modifications for invalid statement
+			    	// --- lexical error: invalid statement
 			    	if (tempLex.getLexType().equals("Invalid Statement")) {
-			    		flag = false;
-			    		break;
+			    		this.myTerminal.error(3000,2);
+			    		return false;
 			    	}
-
-			    	// --- modifications for BTW comment
-			    	if (tempLex.getLexType().equals("Comments")){
-			    		tempLex.setText(tempLex.getRegex().substring(0,3));
-			    	}
-
-			    	// --- modifications for OBTW & TLDR multi-line comment
-					if (tempLex.getRegex().equals("TLDR") && tempLex.getLexType().equals("Multi-line Comment")) {
-						mark = false;
-					} else if (tempLex.getRegex().equals("OBTW") && tempLex.getLexType().equals("Multi-line Comment")) {
-						this.lexemes.add(tempLex);
-						mark = true;
-						break;
-					}
-
-					// --- determines if the lexeme is still a comment
-					if (mark == true) return false;
 					
 					// --- valid lexeme
 					this.lexemes.add(tempLex);
 					break;
 				}
-			}
-
-			// -- Syntax Error Condition
-			if (flag == false) {
-				if (mark == true) return false;
-				this.myTerminal.error(3000,2);
-				return true;
 			}
 		} return false;
 	}
@@ -177,7 +139,7 @@ public class Parser {
 		this.addRegex("(TROOF|NUMBR|NUMBAR|YARN|NOOB)", "Type Literal");
 
 		// Comments
-		this.addRegex("BTW(\\s+.+)?", "Comments");
+		this.addRegex("BTW", "Comments");
 		this.addRegex("OBTW", "Multi-line Comment");
 		this.addRegex("TLDR", "Multi-line Comment");
 
@@ -196,13 +158,13 @@ public class Parser {
 		this.addRegex("SMALLR\\sOF", "Arithmetic Operator");
 
 		// Boolean Operators
+		this.addRegex("NOT", "Boolean Operator");
 		this.addRegex("BOTH\\sOF", "Boolean Operator");
 		this.addRegex("EITHER\\sOF", "Boolean Operator");
-		this.addRegex("NOT", "Boolean Operator");
+		this.addRegex("WON\\sOF", "Boolean Operator");
 		this.addRegex("ANY\\sOF", "Boolean Operator");
 		this.addRegex("ALL\\sOF", "Boolean Operator");
-		this.addRegex("WON\\sOF", "Boolean Operator");
-		this.addRegex("MKAY", "Boolean Operator");
+		this.addRegex("MKAY", "Boolean Delimiter");
 
 		// Comparison-Boolean Operators
 		this.addRegex("BOTH\\sSAEM", "Boolean Operator");

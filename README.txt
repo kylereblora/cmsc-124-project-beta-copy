@@ -4,12 +4,12 @@
 *  First Semester School Year 2017-2018                                                  *
 *                                                                                        *
 *  LOLCODE Interpreter                                                                   *
-*  Project Version - Beta Version                                                        *
+*  Project Version - Beta Version (Status: Unfinished)                                   *
 *                                                                                        *
-*  Authors: Ping Pong Pang                                                               *
+*  Developers: Ping Pong Pang                                                            *
 *    Andric Quinn S. Baticos                                                             *
 *    Kyle Matthew B. Reblora                                                             *
-*    Nicolo Jireh D. Unson                                                               *
+*    Nicolo Jireh D. Unson (Quality Assurance / Quality Control)                         *
 *                                                                                        *
 *  (c) ALL RIGHTS RESERVED 2017                                                          *
 *                                                                                        *
@@ -28,9 +28,10 @@
 			Error 8200	-	Invalid Arguments
 			Error 8500	-	Operation Errors (Arithmetic)
 
-
 		Error 6XXX - Semantic Analyzer Error
 			These types of errors can be found during the semantic analysis process.
+
+			Error 6100	-	Arithmetic Operation Error
 
 
 	Table 1.1 (Error Table)
@@ -45,6 +46,8 @@
 	| 8004 | SYNX | statements found after KTHXBYE delimiter                                   |
 	| 8005 | SYNX | duplicate HAI statement                                                    |
 	| 8006 | SYNX | invalid declaration of IT statement                                        |
+	| 8007 | SYNX | invalid termination of comment                                             |
+	| 8008 | SYNX | invalid use of AN statement                                                |
 	| 8050 | SYNX | multiple statements in line                                                |
 	|------------------------------------------------------------------------------------------|
 	| 8100 | SYNX | missing KTHXBYE statement                                                  |
@@ -57,7 +60,8 @@
 	| 8107 | SYNX | missing AN statement in binary operator                                    |
 	| 8108 | SYNX | missing arguments; arithmetic operation                                    |
 	| 8109 | SYNX | missing arguments; gimmeh operation                                        |
-	| 8110 | SYNX | missing arguments; ooolean operation                                       |
+	| 8110 | SYNX | missing arguments; boolean operation                                       |
+	| 8111 | SYNX | missing AN operation; boolean operation                                    |
 	|------------------------------------------------------------------------------------------|
 	| 8201 | SYNX | invalid use of variable declaration; variable has been initialized already |
 	| 8202 | SYNX | invalid use of variable declaration; ITZ statement not found               |
@@ -72,6 +76,7 @@
 	| 8602 | SYNX | invalid value for SMOOSH                                                   |
 	|------------------------------------------------------------------------------------------|
 	| 8700 | SYNX | boolean operation; invalid arguments                                       |
+	| 8701 | SYNX | boolean operation; missing MKAY statement                                  |
 	============================================================================================
-	| 6000 | SMNC |                                                                            |
+	| 6000 | SMNC | invalid operation of data types                                            |
 	*==========================================================================================*

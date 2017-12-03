@@ -1,4 +1,14 @@
 
+	BUGS
+
+	1) Functionality Errors
+	2) Communication Errors
+	3) Missing Command Errors
+	4) Synctactic Errors
+	5) Error Handling Errors
+	6) Calculation Errors
+	7) Control Flow Errors
+
 	*============================================================================================*
 	| DATE     | STATUS     | DESCRIPTION                                                        |
 	|============================================================================================|
@@ -15,4 +25,6 @@
 	|          |            | operation of invalid values                                        |
 	| 12/01/17 | INCOMPLETE | var R var                                                          |
 	|          |            | assignment to itself                                               |
+	| 12/02/17 | INCOMPLETE | data type errors -> move to semantic errors                        |
+	| 12/02/17 | INCOMPLETE | parsing of comments
 	==============================================================================================

@@ -61,6 +61,7 @@ public class ExecuteButton extends JButton implements ActionListener {
 		this.analyzer.setParser(this.parser);
 
 		// terminal printing reset
+		System.out.println("\n== Initializing LOLCODE Interpreter 2017 ==");
 		this.myTerminal.getTextArea().setText("\n == LOLCODE Interpreter (c) PING PONG PANG ==\n");
 		if (this.myEditor.getFileName().equals("")) this.myEditor.setFileName("<user_input>");
 
@@ -73,19 +74,11 @@ public class ExecuteButton extends JButton implements ActionListener {
 		this.lineNumber = 1;
 		for (String lineRead : this.myEditor.getTextArea().getText().split("\\n")) {
 			
+			System.out.println("Executing parser...");
 			this.line = lineRead;
 			this.parser.getLexemes().clear();
 			this.hasError = parser.createLexemes(lineRead);
 			if (this.hasError) break;
-
-			if (parser.getLexemes().size() >= 1) {
-				for(Lexeme i : parser.getLexemes()){
-					this.myTable.getModel().addRow(new Object[]{i.getRegex(),i.getLexType()});
-				}
-			}
-
-			// removes all comments
-			this.parser.cleanLexList();
 
 			// -- syntax analysis and semantic analysis call
 			if (!this.analyzer.analyze(this.parser.getLexemes())) break;
@@ -97,7 +90,6 @@ public class ExecuteButton extends JButton implements ActionListener {
 				this.myStorage.getModel().addRow(new Object[]{key.getRegex(), analyzer.getStorage().get(key).getRegex(), analyzer.getStorage().get(key).getLexType()});
 			}
 
-			this.analyzer.loadDefault();
 			lineNumber++;
 		}
 
