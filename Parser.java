@@ -182,7 +182,6 @@ public class Parser {
 		// If-Then Statements
 		this.addRegex("O\\sRLY\\?", "IF-THEN Statement"); 
 		this.addRegex("YA\\sRLY", "IF-THEN Statement"); 
-		this.addRegex("MEBBE", "IF-THEN Statement"); 
 		this.addRegex("NO\\sWAI", "IF-THEN Statement"); 
 		this.addRegex("OIC", "IF-THEN Statement"); 
 
