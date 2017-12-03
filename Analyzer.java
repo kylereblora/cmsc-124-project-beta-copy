@@ -70,11 +70,11 @@ public class Analyzer {
 
 	private Lexeme determineType(Lexeme lexeme) {
 
-		if (!lexeme.getLexType().equals("Code Delimiter") && this.isComplete==null) {
+		if (this.commentFlag && !lexeme.getLexType().equals("Multi-line Comment")) {
+			return lexeme;
+		} else if (!lexeme.getLexType().equals("Code Delimiter") && !lexeme.getLexType().equals("Comments") &&!lexeme.getLexType().equals("Multi-line Comment") && this.isComplete==null) {
 			this.terminal.error(8003, 2);
 			return null;
-		} else if (this.commentFlag && !lexeme.getLexType().equals("Multi-line Comment")) {
-			return lexeme;
 		}
 
 		System.out.println("Checking ( "+ lexeme.getRegex() +" ) lexeme...");
