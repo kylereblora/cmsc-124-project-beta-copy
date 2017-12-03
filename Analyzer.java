@@ -918,8 +918,8 @@ public class Analyzer {
 		} 
 
 		// Condition 3: Infinite Arity
-		while (this.lexlist.size() != index+1) {
-
+		
+		do{
 			// Condition 3: Uses AN keyword
 			this.table.getModel().addRow(new Object[]{this.lexlist.get(index+1).getRegex(), this.lexlist.get(index+1).getLexType()});			
 			this.lexlist.remove(index+1);
@@ -938,7 +938,7 @@ public class Analyzer {
 
 			this.lexlist.remove(index+1);
 			concatenated += this.parser.removeQuotes(tailString);
-		}
+		} while (this.lexlist.size() > index+1);
 
 		this.storage.put(it, new Lexeme(concatenated, "Yarn Literal"));
 		return new Lexeme(concatenated, "Yarn Literal");
