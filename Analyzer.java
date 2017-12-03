@@ -540,7 +540,7 @@ public class Analyzer {
 						}	
 					default: break;
 				} this.lexlist.remove(index+1);
-			} 
+			}
 
 			// Condition 8: Both X and Y are valid
 
@@ -555,18 +555,13 @@ public class Analyzer {
 						default: break;
 					}
 				} else if (x instanceof Boolean) {
-
 					switch (operation.getRegex()) {
-						case "NOT": System.out.println("CURRENT: ----------------> ");result = boolOperation(x,null,0); break;
+						case "NOT": result = boolOperation(x,null,0); break;
 						default: break;
 					}
 				}
 
-			this.storage.put(this.it,result); 
-			if (operation.getRegex().equals("NOT")) {
-				System.out.println("pumasok dito sa NOT");
-				this.storage.put(this.checkStorage(tempX), this.storage.get(this.checkStorage(it)));  
-			}
+			this.storage.put(this.it,result);
 
 			if (!operation.getRegex().equals("ANY OF") && !operation.getRegex().equals("ALL OF")) {
 				return result;
@@ -611,22 +606,23 @@ public class Analyzer {
 		switch(variableX.getLexType()) {
 			case "Numbr Literal": x = Integer.parseInt(this.storage.get(it).getRegex()); break;
 			case "Numbar Literal": x = Float.valueOf(this.storage.get(it).getRegex().trim()).floatValue(); break;
-			case "Yarn Literal": x = variableX.getRegex();
-			case "Troof Literal" : 
-				if (variableX.getRegex().equals("WIN")) x = true;
-				else if (variableX.getRegex().equals("FAIL")) x = false;
+			case "Yarn Literal":
+				tempX = this.parser.parse(variableX.getRegex());
+				if (tempX.getLexType().equals("Numbr Literal")) x = Integer.parseInt(tempX.getRegex());
+				else if (tempX.getLexType().equals("Numbar Literal")) x = Float.valueOf(tempX.getRegex().trim()).floatValue();
+				else {this.terminal.error(6000,2); return null; }
 				break;
 			case "Variable Identifier":
 				tempX = this.checkStorage(variableX);
 				if (this.storage.get(tempX).getLexType().equals("Numbr Literal")) x = Integer.parseInt(this.storage.get(tempX).getRegex());
 				else if (this.storage.get(tempX).getLexType().equals("Numbar Literal")) x = Float.valueOf(this.storage.get(tempX).getRegex().trim()).floatValue();
 				else if (this.storage.get(tempX).getLexType().equals("Yarn Literal")) {
-					tempX = this.parser.parse(this.storage.get(tempX).getRegex());
-					x = tempX.getRegex();
-				} else if (this.storage.get(tempX).getLexType().equals("Troof Literal")){
-					if (this.storage.get(tempX).getRegex().equals("WIN")) x = true;
-					else if (this.storage.get(tempX).getRegex().equals("FAIL")) x = false;
-				} 
+					tempX = this.parser.parse(variableX.getRegex());
+					if (tempX.getLexType().equals("Numbr Literal")) x = Integer.parseInt(tempX.getRegex());
+					else if (tempX.getLexType().equals("Numbar Literal")) x = Float.valueOf(tempX.getRegex().trim()).floatValue();
+					else {this.terminal.error(6000,2); return null; }
+					break;
+				}
 				break;
 			default: return null;
 		}
@@ -654,22 +650,23 @@ public class Analyzer {
 		switch(variableY.getLexType()) {
 			case "Numbr Literal": y = Integer.parseInt(this.storage.get(it).getRegex()); break;
 			case "Numbar Literal": y = Float.valueOf(this.storage.get(it).getRegex().trim()).floatValue(); break;
-			case "Yarn Literal": y = variableY.getRegex();
-			case "Troof Literal" : 
-				if (variableY.getRegex().equals("WIN")) x = true;
-				else if (variableY.getRegex().equals("FAIL")) x = false;
+			case "Yarn Literal":
+				tempY = this.parser.parse(variableY.getRegex());
+				if (tempY.getLexType().equals("Numbr Literal")) y = Integer.parseInt(tempY.getRegex());
+				else if (tempY.getLexType().equals("Numbar Literal")) y = Float.valueOf(tempY.getRegex().trim()).floatValue();
+				else {this.terminal.error(6000,2); return null;}
 				break;
 			case "Variable Identifier":
 				tempY = this.checkStorage(variableY);
 				if (this.storage.get(tempY).getLexType().equals("Numbr Literal")) y = Integer.parseInt(this.storage.get(tempY).getRegex());
 				else if (this.storage.get(tempY).getLexType().equals("Numbar Literal")) y = Float.valueOf(this.storage.get(tempY).getRegex().trim()).floatValue();
 				else if (this.storage.get(tempY).getLexType().equals("Yarn Literal")) {
-					tempY = this.parser.parse(this.storage.get(tempY).getRegex());
-					y = tempY.getRegex();
-				} else if (this.storage.get(tempY).getLexType().equals("Troof Literal")){
-					if (this.storage.get(tempY).getRegex().equals("WIN")) y = true;
-					else if (this.storage.get(tempY).getRegex().equals("FAIL")) y = false;
-				} 
+					tempY = this.parser.parse(variableY.getRegex());
+					if (tempY.getLexType().equals("Numbr Literal")) y = Integer.parseInt(tempY.getRegex());
+					else if (tempY.getLexType().equals("Numbar Literal")) y = Float.valueOf(tempY.getRegex().trim()).floatValue();
+					else {this.terminal.error(6000,2); return null;}
+					break;
+				}
 				break;
 			default: return null;
 		} this.lexlist.remove(index+1);
@@ -754,7 +751,7 @@ public class Analyzer {
 				break;
 			default: break;
 		}
-		System.out.println("answer: ===========> "+answer);
+
 		String result = "";
 		if(answer == true) result = "WIN";
 		else result = "FAIL";
@@ -835,6 +832,7 @@ public class Analyzer {
 			}
 
 		// Condition 3: Valid Statements Found
+			this.lexlist.remove(current);
 			String message = "";
 			while (this.lexlist.size() > index+1) {
 				
