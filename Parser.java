@@ -75,7 +75,7 @@ public class Parser {
 			    	// --- lexical error: invalid statement
 			    	if (tempLex.getLexType().equals("Invalid Statement")) {
 			    		this.myTerminal.error(3000,2);
-			    		return false;
+			    		return true;
 			    	}
 					
 					// --- valid lexeme

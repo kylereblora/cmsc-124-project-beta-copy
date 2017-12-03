@@ -540,7 +540,7 @@ public class Analyzer {
 						}	
 					default: break;
 				} this.lexlist.remove(index+1);
-			}
+			} 
 
 			// Condition 8: Both X and Y are valid
 
@@ -555,13 +555,18 @@ public class Analyzer {
 						default: break;
 					}
 				} else if (x instanceof Boolean) {
+
 					switch (operation.getRegex()) {
-						case "NOT": result = boolOperation(x,null,0); break;
+						case "NOT": System.out.println("CURRENT: ----------------> ");result = boolOperation(x,null,0); break;
 						default: break;
 					}
 				}
 
-			this.storage.put(this.it,result);
+			this.storage.put(this.it,result); 
+			if (operation.getRegex().equals("NOT")) {
+				System.out.println("pumasok dito sa NOT");
+				this.storage.put(this.checkStorage(tempX), this.storage.get(this.checkStorage(it)));  
+			}
 
 			if (!operation.getRegex().equals("ANY OF") && !operation.getRegex().equals("ALL OF")) {
 				return result;
@@ -749,7 +754,7 @@ public class Analyzer {
 				break;
 			default: break;
 		}
-
+		System.out.println("answer: ===========> "+answer);
 		String result = "";
 		if(answer == true) result = "WIN";
 		else result = "FAIL";
