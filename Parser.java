@@ -167,8 +167,8 @@ public class Parser {
 		this.addRegex("MKAY", "Boolean Delimiter");
 
 		// Comparison-Boolean Operators
-		this.addRegex("BOTH\\sSAEM", "Boolean Operator");
-		this.addRegex("DIFFRINT", "Boolean Operator");
+		this.addRegex("BOTH\\sSAEM", "Comparison Operator");
+		this.addRegex("DIFFRINT", "Comparison Operator");
 
 		// Other Keywords
 		this.addRegex("SMOOSH", "Concatenation");

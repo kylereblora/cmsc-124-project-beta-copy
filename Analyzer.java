@@ -25,6 +25,7 @@ public class Analyzer {
 	private Hashtable<Lexeme,Lexeme> storage;
 	private Set<Lexeme> keys;
 	private Lexeme it;
+	private Lexeme lastLexeme;
 	private Lexeme noob;
 	private LexemeTable table;
 	private Parser parser;
@@ -86,6 +87,8 @@ public class Analyzer {
 			case "Variable Identifier": return variableIdentifier(lexeme);
 			case "Assignment Operator": return assignmentOperator(lexeme);
 			case "Arithmetic Operator": return arithmeticOperator(lexeme);
+			case "Boolean Operator": return booleanOperator(lexeme);
+			case "Comparison Operator": return comparisonOperator(lexeme);
 			case "Global Variable": return globalVariable(lexeme);
 			case "Numbr Literal": return literal(lexeme);
 			case "Numbar Literal": return literal(lexeme);
@@ -95,7 +98,6 @@ public class Analyzer {
 			case "Output Keyword": return visible(lexeme);
 			case "Concatenation": return smoosh(lexeme);
 			case "Input Keyword": return gimmeh(lexeme);
-			case "Boolean Operator": return booleanOperator(lexeme);
 			default: return null;
 		}
 	}
@@ -258,6 +260,7 @@ public class Analyzer {
 	private Lexeme variableIdentifier(Lexeme lexeme) {
 
 		Boolean isFound = false; int index = this.lexlist.indexOf(lexeme);
+		this.lastLexeme = lexeme;
 		this.table.getModel().addRow(new Object[]{this.lexlist.get(index).getRegex(),this.lexlist.get(index).getLexType()});
 
 		// Search: Lexeme in Table
@@ -288,10 +291,9 @@ public class Analyzer {
 	private Lexeme assignmentOperator(Lexeme lexeme) {
 
 		int index = this.lexlist.indexOf(lexeme);
-	
-		// Condition 1: No Preceding Statements Found]
-		System.out.println("index: "+index+ "     current: "+ current);
-		if (this.lexlist.get(current) == lexeme) {
+
+		// Condition 1: No Preceding Statements Found
+		if (!this.lastLexeme.getLexType().equals("Variable Identifier")) {
 			this.terminal.error(8105,2);
 			return null;
 
@@ -304,10 +306,8 @@ public class Analyzer {
 			}
 
 		// Condition 3: Invalid Argument for Operator
-			Lexeme it_temp = checkStorage(it);
-			Lexeme variable = this.storage.get(it_temp);
+			Lexeme variable = checkStorage(lastLexeme);
 
-			this.lexlist.remove(index-1); index -= 1;
 			this.table.getModel().addRow(new Object[]{this.lexlist.get(index).getRegex(),this.lexlist.get(index).getLexType()});
 
 			Lexeme value = determineType(this.lexlist.get(index+1));
@@ -588,6 +588,106 @@ public class Analyzer {
 		return result; 
 	}
 
+	private Lexeme comparisonOperator(Lexeme lexeme) {
+
+		Object x=null,y=null;
+
+		Lexeme operation = lexeme; int index = this.lexlist.indexOf(lexeme);
+		this.table.getModel().addRow(new Object[]{this.lexlist.get(index).getRegex(),this.lexlist.get(index).getLexType()});
+
+		// Condition 1: No Statements found after operator
+		if (this.lexlist.size() == index+1) {
+			this.terminal.error(8108,2);
+			return null;
+		}
+
+		// Condition 2: Argument X is invalid
+		Lexeme variableX = determineType(this.lexlist.get(index+1)), tempX = null;
+		if (variableX==null) {
+			this.terminal.error(8108,2);
+			return null;
+		}
+
+		// Condition 3: Argument X is valid
+		switch(variableX.getLexType()) {
+			case "Numbr Literal": x = Integer.parseInt(this.storage.get(it).getRegex()); break;
+			case "Numbar Literal": x = Float.valueOf(this.storage.get(it).getRegex().trim()).floatValue(); break;
+			case "Yarn Literal": x = variableX.getRegex();
+			case "Troof Literal" : 
+				if (variableX.getRegex().equals("WIN")) x = true;
+				else if (variableX.getRegex().equals("FAIL")) x = false;
+				break;
+			case "Variable Identifier":
+				tempX = this.checkStorage(variableX);
+				if (this.storage.get(tempX).getLexType().equals("Numbr Literal")) x = Integer.parseInt(this.storage.get(tempX).getRegex());
+				else if (this.storage.get(tempX).getLexType().equals("Numbar Literal")) x = Float.valueOf(this.storage.get(tempX).getRegex().trim()).floatValue();
+				else if (this.storage.get(tempX).getLexType().equals("Yarn Literal")) {
+					tempX = this.parser.parse(this.storage.get(tempX).getRegex());
+					x = tempX.getRegex();
+				} else if (this.storage.get(tempX).getLexType().equals("Troof Literal")){
+					if (this.storage.get(tempX).getRegex().equals("WIN")) x = true;
+					else if (this.storage.get(tempX).getRegex().equals("FAIL")) x = false;
+				} 
+				break;
+			default: return null;
+		}
+
+		// Condition 4: Uses AN operator
+		this.lexlist.remove(index+1);
+		if(!this.lexlist.get(index+1).getLexType().equals("Operation Keyword")) {
+			this.terminal.error(8107,2);
+			return null;
+		} this.table.getModel().addRow(new Object[]{this.lexlist.get(index+1).getRegex(),this.lexlist.get(index+1).getLexType()}); this.lexlist.remove(index+1);
+
+		// Condition 5: No statements found after AN Operator
+		if (this.lexlist.size() == index+1) {
+			this.terminal.error(8108,2);
+			return null;
+		}
+
+		// Condition 6: Argument Y is invalid
+		Lexeme variableY = determineType(this.lexlist.get(index+1)), tempY = null;
+		if (variableY==null) {
+			return null;
+		}
+
+		// Condition 7: Argument Y is valid
+		switch(variableY.getLexType()) {
+			case "Numbr Literal": y = Integer.parseInt(this.storage.get(it).getRegex()); break;
+			case "Numbar Literal": y = Float.valueOf(this.storage.get(it).getRegex().trim()).floatValue(); break;
+			case "Yarn Literal": y = variableY.getRegex();
+			case "Troof Literal" : 
+				if (variableY.getRegex().equals("WIN")) x = true;
+				else if (variableY.getRegex().equals("FAIL")) x = false;
+				break;
+			case "Variable Identifier":
+				tempY = this.checkStorage(variableY);
+				if (this.storage.get(tempY).getLexType().equals("Numbr Literal")) y = Integer.parseInt(this.storage.get(tempY).getRegex());
+				else if (this.storage.get(tempY).getLexType().equals("Numbar Literal")) y = Float.valueOf(this.storage.get(tempY).getRegex().trim()).floatValue();
+				else if (this.storage.get(tempY).getLexType().equals("Yarn Literal")) {
+					tempY = this.parser.parse(this.storage.get(tempY).getRegex());
+					y = tempY.getRegex();
+				} else if (this.storage.get(tempY).getLexType().equals("Troof Literal")){
+					if (this.storage.get(tempY).getRegex().equals("WIN")) y = true;
+					else if (this.storage.get(tempY).getRegex().equals("FAIL")) y = false;
+				} 
+				break;
+			default: return null;
+		} this.lexlist.remove(index+1);
+
+		// Condition 8: Both X and Y are valid
+		Lexeme result = new Lexeme(null,"NOOB Literal");
+
+		switch (operation.getRegex()) {
+				case "BOTH SAEM": result = comparisonOperation(x,y,1); break;
+				case "DIFFRINT": result = comparisonOperation(x,y,2); break;
+				default: break;
+		}
+		
+		this.storage.put(checkStorage(it),result);
+		return result;
+	}
+
 	private Lexeme integerOperator(Object x, Object y, int code) {
 
 		int a = (int) x; int b = (int) y; int answer = 0;
@@ -657,6 +757,26 @@ public class Analyzer {
 		}
 		System.out.println("answer: ===========> "+answer);
 		String result = "";
+		if(answer == true) result = "WIN";
+		else result = "FAIL";
+
+		return new Lexeme(result,"Troof Literal");
+	}
+
+	private Lexeme comparisonOperation(Object x, Object y, int code) {
+		Boolean answer = false; String result = "";
+		switch (code) {
+			case 1:
+				if (x == y) answer = true;
+				else answer = false;
+				break;
+			case 2:
+				if (x != y) answer = true;
+				else answer = false;
+				break;
+			default: break;
+		} System.out.println(answer);
+
 		if(answer == true) result = "WIN";
 		else result = "FAIL";
 
@@ -736,6 +856,9 @@ public class Analyzer {
 					message += this.storage.get(this.checkStorage(temporaryLexeme)).getRegex() + " ";
 
 				// Condition 3.4: The statements were not met
+				} else if (temporaryLexeme.getLexType().equals("Comments")) {
+					break;
+
 				} else return null;
 
 		 		this.lexlist.remove(index+1);
