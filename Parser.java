@@ -61,7 +61,7 @@ public class Parser {
 		Boolean flag = false;
 		String filename = this.myTerminal.getEditor().getFileName();														
 
-		System.out.println("Parsing statements...");
+		System.out.println("Parsing current line ...");
 		while(!s.equals("")){
 			for(int i = 0; i < tokens.size(); i++){
 				this.matcher = tokens.get(i).getRegex().matcher(s);
