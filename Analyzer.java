@@ -22,11 +22,15 @@ public class Analyzer {
 	private ArrayList<Lexeme> lexlist;
 	private Boolean isComplete;
 	private Boolean commentFlag;
+	private Boolean condition;
+	private Boolean flowFlag;
+	private Boolean subFlowFlag;
 	private Hashtable<Lexeme,Lexeme> storage;
 	private Set<Lexeme> keys;
 	private Lexeme it;
 	private Lexeme lastLexeme;
 	private Lexeme noob;
+	private Lexeme expression;
 	private LexemeTable table;
 	private Parser parser;
 	private Terminal terminal;
@@ -41,7 +45,7 @@ public class Analyzer {
 		this.it = new Lexeme("IT","Global Variable");
 		this.noob = new Lexeme(null,"NOOB Literal");
 		this.storage = new Hashtable<Lexeme,Lexeme>();
-		this.commentFlag = false;
+		this.commentFlag = this.flowFlag = this.subFlowFlag = false;
 	}
 
 	/****************
@@ -71,11 +75,20 @@ public class Analyzer {
 
 	private Lexeme determineType(Lexeme lexeme) {
 
+		/* Conditional Statements*/
+
+		// Condition 1: Lexemes are in a multi-line comment
 		if (this.commentFlag && !lexeme.getLexType().equals("Multi-line Comment")) {
 			return lexeme;
+
+		// Condition 2: Lexemes are not inside the program
 		} else if (!lexeme.getLexType().equals("Code Delimiter") && !lexeme.getLexType().equals("Comments") &&!lexeme.getLexType().equals("Multi-line Comment") && this.isComplete==null) {
 			this.terminal.error(8003, 2);
 			return null;
+
+		// Condition 3: Lexemes are not to be executed
+		} else if (this.flowFlag && !this.subFlowFlag && !lexeme.getLexType().equals("IF-THEN Statement")) {
+			return lexeme;
 		}
 
 		System.out.println("Checking ( "+ lexeme.getRegex() +" ) lexeme...");
@@ -98,6 +111,7 @@ public class Analyzer {
 			case "Output Keyword": return visible(lexeme);
 			case "Concatenation": return smoosh(lexeme);
 			case "Input Keyword": return gimmeh(lexeme);
+			case "IF-THEN Statement": return controlFlowIfThen(lexeme);
 			default: return null;
 		}
 	}
@@ -125,7 +139,7 @@ public class Analyzer {
 	****************/
 	public void reset(){
 		this.isComplete = null;
-		this.commentFlag = false;
+		this.commentFlag = this.flowFlag = this.subFlowFlag = false;
 		this.storage.clear();
 	}
 
@@ -930,6 +944,33 @@ public class Analyzer {
 		this.table.getModel().addRow(new Object[]{this.lexlist.get(index).getRegex(),this.lexlist.get(index).getLexType()});
 
 		this.storage.put(this.it, lexeme);
+		return lexeme;
+	}
+
+	private Lexeme controlFlowIfThen(Lexeme lexeme) {
+
+		this.table.getModel().addRow(new Object[]{this.lexlist.get(current).getRegex(),this.lexlist.get(current).getLexType()});
+		switch (lexeme.getRegex()) {
+			case "O RLY?":
+				this.expression = this.storage.get(this.it);
+				this.condition = false;
+				if (expression.getRegex().equals("WIN")) condition = true;
+				else condition = false;
+				flowFlag = true;
+				break;
+			case "YA RLY":
+				if (condition==true) subFlowFlag = true;
+				break;
+			case "NO WAI":
+				if (condition==false) subFlowFlag = true;
+				else subFlowFlag = false;
+				break;
+			case "OIC":
+				flowFlag = false;
+				break;
+			default: break;
+		}
+
 		return lexeme;
 	}
 
