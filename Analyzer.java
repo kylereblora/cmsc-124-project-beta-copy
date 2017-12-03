@@ -317,7 +317,7 @@ public class Analyzer {
 		int index = this.lexlist.indexOf(lexeme);
 
 		// Condition 1: No Preceding Statements Found
-		if (!this.lastLexeme.getLexType().equals("Variable Identifier")) {
+		if (!this.lastLexeme.getLexType().equals("Variable Identifier") && !this.lastLexeme.getLexType().equals("Global Variable")) {
 			this.terminal.error(8105,2);
 			return null;
 
@@ -374,7 +374,7 @@ public class Analyzer {
 				tempX = this.parser.parse(variableX.getRegex());
 				if (tempX.getLexType().equals("Numbr Literal")) x = Integer.parseInt(tempX.getRegex());
 				else if (tempX.getLexType().equals("Numbar Literal")) x = Float.valueOf(tempX.getRegex().trim()).floatValue();
-				else {this.terminal.error(6000,2); return null; }
+				else {this.terminal.error(6100,2); return null; }
 				break;
 			case "Variable Identifier":
 				tempX = this.checkStorage(variableX);
@@ -384,7 +384,7 @@ public class Analyzer {
 					tempX = this.parser.parse(this.storage.get(tempX).getRegex());
 					if (tempX.getLexType().equals("Numbr Literal")) x = Integer.parseInt(tempX.getRegex());
 					else if (tempX.getLexType().equals("Numbar Literal")) x = Float.valueOf(tempX.getRegex().trim()).floatValue();
-					else {this.terminal.error(6000,2); return null; }
+					else {this.terminal.error(6100,2); return null; }
 				}
 				break;
 			default: return null;
@@ -417,7 +417,7 @@ public class Analyzer {
 				tempY = this.parser.parse(variableY.getRegex());
 				if (tempY.getLexType().equals("Numbr Literal")) y = Integer.parseInt(tempY.getRegex());
 				else if (tempY.getLexType().equals("Numbar Literal")) y = Float.valueOf(tempY.getRegex().trim()).floatValue();
-				else {this.terminal.error(6000,2); return null;}
+				else {this.terminal.error(6100,2); return null;}
 				break;
 			case "Variable Identifier":
 				tempY = this.checkStorage(variableY);
@@ -427,7 +427,7 @@ public class Analyzer {
 					tempY = this.parser.parse(this.storage.get(tempY).getRegex());
 					if (tempY.getLexType().equals("Numbr Literal")) y = Integer.parseInt(tempY.getRegex());
 					else if (tempY.getLexType().equals("Numbar Literal")) y = Float.valueOf(tempY.getRegex().trim()).floatValue();
-					else {this.terminal.error(6000,2); return null; }
+					else {this.terminal.error(6100,2); return null; }
 				}
 				break;
 			default: this.terminal.error(8203,2); return null;
@@ -635,7 +635,7 @@ public class Analyzer {
 				tempX = this.parser.parse(variableX.getRegex());
 				if (tempX.getLexType().equals("Numbr Literal")) x = Integer.parseInt(tempX.getRegex());
 				else if (tempX.getLexType().equals("Numbar Literal")) x = Float.valueOf(tempX.getRegex().trim()).floatValue();
-				else {this.terminal.error(6000,2); return null; }
+				else {this.terminal.error(6100,2); return null; }
 				break;
 			case "Variable Identifier":
 				tempX = this.checkStorage(variableX);
@@ -645,7 +645,7 @@ public class Analyzer {
 					tempX = this.parser.parse(variableX.getRegex());
 					if (tempX.getLexType().equals("Numbr Literal")) x = Integer.parseInt(tempX.getRegex());
 					else if (tempX.getLexType().equals("Numbar Literal")) x = Float.valueOf(tempX.getRegex().trim()).floatValue();
-					else {this.terminal.error(6000,2); return null; }
+					else {this.terminal.error(6100,2); return null; }
 					break;
 				}
 				break;
@@ -679,7 +679,7 @@ public class Analyzer {
 				tempY = this.parser.parse(variableY.getRegex());
 				if (tempY.getLexType().equals("Numbr Literal")) y = Integer.parseInt(tempY.getRegex());
 				else if (tempY.getLexType().equals("Numbar Literal")) y = Float.valueOf(tempY.getRegex().trim()).floatValue();
-				else {this.terminal.error(6000,2); return null;}
+				else {this.terminal.error(6100,2); return null;}
 				break;
 			case "Variable Identifier":
 				tempY = this.checkStorage(variableY);
@@ -689,7 +689,7 @@ public class Analyzer {
 					tempY = this.parser.parse(variableY.getRegex());
 					if (tempY.getLexType().equals("Numbr Literal")) y = Integer.parseInt(tempY.getRegex());
 					else if (tempY.getLexType().equals("Numbar Literal")) y = Float.valueOf(tempY.getRegex().trim()).floatValue();
-					else {this.terminal.error(6000,2); return null;}
+					else {this.terminal.error(6100,2); return null;}
 					break;
 				}
 				break;
@@ -948,6 +948,7 @@ public class Analyzer {
 	}
 
 	private Lexeme globalVariable (Lexeme lexeme) {
+		this.lastLexeme = lexeme;
 		if (this.lexlist.get(current).getLexType().equals("Variable Declaration")) {
 			this.terminal.error(8006,1);
 			return null;
