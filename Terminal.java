@@ -149,6 +149,7 @@ public class Terminal extends JPanel {
 	public ExecuteButton getButton() {return this.executeButton;}
 	public Editor getEditor() {return this.editor;}
 	public Interpreter getInterpreter() {return this.interpreter;}
+	public ExecuteButton getExecuteButton() {return this.executeButton;}
 	public static int getPanelWidth(){return Terminal.MAXIMUM_PANEL_WIDTH;}
 	public static int getPanelHeight(){return Terminal.MAXIMUM_PANEL_HEIGHT;}
 

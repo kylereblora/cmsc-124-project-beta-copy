@@ -113,6 +113,7 @@ public class Analyzer {
 	public ArrayList<Lexeme> getLexemes() {return this.lexlist;}
 	public Lexeme getIt() {return this.it;}
 	public int getCurrent(){ return this.current;}
+	public boolean getCommentFlag() {return this.commentFlag;}
 	public boolean getStatus() {
 		if (this.isComplete == null) return true;
 		return this.isComplete;
@@ -278,8 +279,8 @@ public class Analyzer {
 
 		// Condition 2: Variable is in Storage
 		} else {
-			if (this.lexlist.size() == index+1) this.storage.put(this.it, temporaryVariable);
-			else this.storage.put(this.it, this.storage.get(temporaryVariable));
+			if (this.lexlist.size() == index+1) {System.out.println("asdadasdasd");this.storage.put(this.it, temporaryVariable);}
+			else {System.out.println("biubiubiu"); this.storage.put(this.it, this.storage.get(temporaryVariable));}
 			return lexeme;
 		}
 	}
