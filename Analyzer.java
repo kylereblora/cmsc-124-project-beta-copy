@@ -66,6 +66,7 @@ public class Analyzer {
 				this.isComplete = true;
 				return false;
 			}
+
 			this.lastLexeme = this.lexlist.get(current);
 			this.lexlist.remove(current);
 		} 
@@ -150,13 +151,15 @@ public class Analyzer {
 /*******************************************************************************************************************
 	>> FUNCTIONS NEEDED FOR ANALYSIS
 *******************************************************************************************************************/
-
+	
 	private Lexeme comment(Lexeme lexeme) {
 		
 		this.commentFlag = true;
+		
 		this.table.getModel().addRow(new Object[]{this.lexlist.get(current).getRegex(),this.lexlist.get(current).getLexType()});
 		System.out.println("Processing comment lexeme...");
 		int index = this.lexlist.indexOf(lexeme);
+
 		while (this.lexlist.size() > index+1) {
 			this.lexlist.remove(index+1);
 		}
@@ -167,23 +170,23 @@ public class Analyzer {
 
 	private Lexeme multiLineComment(Lexeme lexeme) {
 
-		// Lexeme to Table
-		this.table.getModel().addRow(new Object[]{this.lexlist.get(current).getRegex(),this.lexlist.get(current).getLexType()});
-
 		// Condition 1: The program will skip comments.
 		 if (this.commentFlag == false) {
 			if (lexeme.getRegex().equals("TLDR")) {
 				this.terminal.error(8007,1);
 				return null;
 			} else if (lexeme.getRegex().equals("OBTW")) {
+				this.table.getModel().addRow(new Object[]{this.lexlist.get(current).getRegex(),this.lexlist.get(current).getLexType()});
 				this.commentFlag = true;
 			}
 
-		// Condition 3: The program will finish commenting.
+		// Condition 2: The program will finish commenting.
 		} else if (this.commentFlag == true) {
-			if (lexeme.getRegex().equals("TLDR")) this.commentFlag = false;
+			if (lexeme.getRegex().equals("TLDR")) {
+				this.table.getModel().addRow(new Object[]{this.lexlist.get(current).getRegex(),this.lexlist.get(current).getLexType()});
+				this.commentFlag = false;
+			}
 		}
-
 		return lexeme;
 	}
 
@@ -796,7 +799,7 @@ public class Analyzer {
 				else answer = false;
 				break;
 			default: break;
-		} System.out.println(answer);
+		}
 
 		if(answer == true) result = "WIN";
 		else result = "FAIL";
@@ -840,28 +843,30 @@ public class Analyzer {
 
 	private Lexeme visible(Lexeme lexeme) {
 
-		int index = this.lexlist.indexOf(lexeme);
-		this.table.getModel().addRow(new Object[]{this.lexlist.get(index).getRegex(),this.lexlist.get(index).getLexType()});
+		this.table.getModel().addRow(new Object[]{this.lexlist.get(current).getRegex(),this.lexlist.get(current).getLexType()});
 
 		// Condition 1: Preceding Statements Before Visible
+		System.out.println("Checking statements before ( VISIBLE ) keyword...");
 		if (this.lexlist.get(current) != lexeme) {
 			this.terminal.error(8300, 2);
 			return null;
 
 		} else {
 
-			this.lastLexeme = lexeme;
+		System.out.println("No statements found before ( VISIBLE )");
+		System.out.println("Checking statements after ( VISIBLE ) keyword...");
 		// Condition 2: No Statements Found After Visible
-			if (this.lexlist.size() == index) {
+			this.lastLexeme = lexeme;
+			if (this.lexlist.size() == current+1) {
 				this.terminal.print("\n");
 				return lexeme;
 			}
 
 		// Condition 3: Valid Statements Found
-			String message = "";
-			while (this.lexlist.size() > index+1) {
+			String message = ""; Lexeme temporaryLexeme = null;
+			while (this.lexlist.size() > current+1) {
 				
-				Lexeme temporaryLexeme = determineType(this.lexlist.get(index+1));
+				temporaryLexeme = determineType(this.lexlist.get(current+1));
 
 				// Condition 3.1: The statement to be printed is invalid
 				if (temporaryLexeme==null) {
@@ -877,13 +882,10 @@ public class Analyzer {
 				} else if (temporaryLexeme.getLexType().equals("Variable Identifier") || temporaryLexeme.getLexType().equals("Global Variable")) {
 					message += this.storage.get(this.checkStorage(temporaryLexeme)).getRegex() + " ";
 
-				// Condition 3.4: The statements were not met
-				} else if (temporaryLexeme.getLexType().equals("Comments")) {
-					break;
-
+				// Condition 3.4: The next statement is a comment
 				} else return null;
 
-		 		this.lexlist.remove(index+1);
+		 		this.lexlist.remove(current+1);
 			
 			} message+= "\n";
 
@@ -914,8 +916,8 @@ public class Analyzer {
 		} 
 
 		// Condition 3: Infinite Arity
-		while (this.lexlist.size() != index+1) {
-
+		
+		do{
 			// Condition 3: Uses AN keyword
 			this.table.getModel().addRow(new Object[]{this.lexlist.get(index+1).getRegex(), this.lexlist.get(index+1).getLexType()});			
 			this.lexlist.remove(index+1);
@@ -934,7 +936,7 @@ public class Analyzer {
 
 			this.lexlist.remove(index+1);
 			concatenated += this.parser.removeQuotes(tailString);
-		}
+		} while (this.lexlist.size() > index+1);
 
 		this.storage.put(it, new Lexeme(concatenated, "Yarn Literal"));
 		return new Lexeme(concatenated, "Yarn Literal");
@@ -994,7 +996,6 @@ public class Analyzer {
 				flowFlag = true;
 				break;
 			case "OMG":
-				System.out.println("Switch casing " + this.expression.getRegex());
 				if (this.expression.getRegex().equals(this.lexlist.get(this.lexlist.indexOf(lexeme)+1).getRegex())) {
 					this.lexlist.remove(current+1);
 					subFlowFlag = true;
@@ -1008,8 +1009,14 @@ public class Analyzer {
 				flowFlag = false;
 				break;
 			default: break;
-		}
+		} return lexeme;
+	}
 
+	private Lexeme invalidStatement(Lexeme lexeme) {
+		if (this.terminal.getExecuteButton().getAnalyzer().getCommentFlag() == false) {		
+			this.terminal.error(3000,2);
+			return null;
+		}
 		return lexeme;
 	}
 

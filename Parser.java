@@ -61,7 +61,7 @@ public class Parser {
 		Boolean flag = false;
 		String filename = this.myTerminal.getEditor().getFileName();														
 
-		System.out.println("Parsing statements...");
+		System.out.println("Parsing current line ...");
 		while(!s.equals("")){
 			for(int i = 0; i < tokens.size(); i++){
 				this.matcher = tokens.get(i).getRegex().matcher(s);
@@ -73,11 +73,6 @@ public class Parser {
 			    	tempLex = new Lexeme(this.temp, tokens.get(i).getType());
 
 			    	// --- lexical error: invalid statement
-			    	if (tempLex.getLexType().equals("Invalid Statement") && this.myTerminal.getExecuteButton().getAnalyzer().getCommentFlag() == false) {
-			    		
-			    		this.myTerminal.error(3000,2);
-			    		return false;
-			    	}
 					
 					// --- valid lexeme
 					this.lexemes.add(tempLex);
