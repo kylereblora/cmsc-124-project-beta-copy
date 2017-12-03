@@ -158,10 +158,7 @@ public class Analyzer {
 		System.out.println("Processing comment lexeme...");
 		int index = this.lexlist.indexOf(lexeme);
 
-		System.out.println("======= INDEX ====: "+index + "\n"+"===========size?===="+this.lexlist.size());
-
 		while (this.lexlist.size() > index+1) {
-			System.out.println("Processing comment lexeme... !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
 			this.lexlist.remove(index+1);
 		}
 
@@ -890,7 +887,6 @@ public class Analyzer {
 			
 			} message+= "\n";
 
-			System.out.println("message: ======================"+message);
 			this.storage.put(this.it, new Lexeme(message, "Yarn Literal"));
 			this.terminal.print(message);
 				
@@ -917,18 +913,18 @@ public class Analyzer {
 			return null;
 		} 
 
+		this.lexlist.remove(index+1);
+
 		// Condition 3: Infinite Arity
-		
-		do{
-			// Condition 3: Uses AN keyword
-			this.table.getModel().addRow(new Object[]{this.lexlist.get(index+1).getRegex(), this.lexlist.get(index+1).getLexType()});			
-			this.lexlist.remove(index+1);
+		while (this.lexlist.size() > index+1){
+			// Condition 3.1: Uses AN keyword
 			if(!this.lexlist.get(index+1).getLexType().equals("Operation Keyword")) {
 				this.terminal.error(8107,2);
 				return null;
 			}
 
 			// Condition 4: Invalid Y Argument
+			this.table.getModel().addRow(new Object[]{this.lexlist.get(index+1).getRegex(), this.lexlist.get(index+1).getLexType()});			
 			this.lexlist.remove(index+1);
 			Lexeme variableY = determineType(this.lexlist.get(index+1));
 			if (variableY == null) {
@@ -936,9 +932,10 @@ public class Analyzer {
 				return null;
 			} tailString = this.storage.get(it).getRegex();
 
+
 			this.lexlist.remove(index+1);
 			concatenated += this.parser.removeQuotes(tailString);
-		} while (this.lexlist.size() > index+1);
+		} 
 
 		this.storage.put(it, new Lexeme(concatenated, "Yarn Literal"));
 		return new Lexeme(concatenated, "Yarn Literal");
@@ -990,8 +987,7 @@ public class Analyzer {
 	}
 
 	private Lexeme invalidStatement(Lexeme lexeme) {
-		if (this.terminal.getExecuteButton().getAnalyzer().getCommentFlag() == false) {
-			    		
+		if (this.terminal.getExecuteButton().getAnalyzer().getCommentFlag() == false) {			    		
 			this.terminal.error(3000,2);
 			return null;
 		}
