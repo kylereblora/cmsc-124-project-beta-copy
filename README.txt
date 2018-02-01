@@ -4,7 +4,7 @@
 *  First Semester School Year 2017-2018                                                  *
 *                                                                                        *
 *  LOLCODE Interpreter                                                                   *
-*  Project Version - Beta Version (Status: Unfinished)                                   *
+*  Project Version - Beta Version (Status: Finished)                                   *
 *                                                                                        *
 *  Developers: Ping Pong Pang                                                            *
 *    Andric Quinn S. Baticos                                                             *
